@@ -1,0 +1,675 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RyzenMusic</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+```
+    body {
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        color: #fff;
+        overflow-x: hidden;
+    }
+
+    .container {
+        max-width: 600px;
+        margin: 0 auto;
+        padding: 20px;
+        padding-bottom: 100px;
+    }
+
+    .header {
+        text-align: center;
+        padding: 30px 0;
+        animation: fadeInDown 0.6s ease-out;
+    }
+
+    .logo {
+        font-size: 60px;
+        margin-bottom: 10px;
+        animation: pulse 2s infinite;
+    }
+
+    .header h1 {
+        font-size: 32px;
+        font-weight: 700;
+        margin-bottom: 8px;
+        text-shadow: 0 2px 10px rgba(0,0,0,0.2);
+    }
+
+    .header p {
+        font-size: 16px;
+        opacity: 0.9;
+    }
+
+    .search-box {
+        margin: 30px 0;
+        animation: fadeInUp 0.6s ease-out 0.2s backwards;
+    }
+
+    .search-container {
+        position: relative;
+        background: rgba(255,255,255,0.15);
+        backdrop-filter: blur(10px);
+        border-radius: 20px;
+        padding: 8px;
+        border: 2px solid rgba(255,255,255,0.2);
+        transition: all 0.3s;
+    }
+
+    .search-container:focus-within {
+        background: rgba(255,255,255,0.25);
+        border-color: rgba(255,255,255,0.4);
+        transform: translateY(-2px);
+        box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    }
+
+    .search-input {
+        width: 100%;
+        padding: 16px 50px 16px 20px;
+        font-size: 16px;
+        border: none;
+        background: transparent;
+        color: #fff;
+        outline: none;
+    }
+
+    .search-input::placeholder {
+        color: rgba(255,255,255,0.6);
+    }
+
+    .search-btn {
+        position: absolute;
+        right: 12px;
+        top: 50%;
+        transform: translateY(-50%);
+        background: rgba(255,255,255,0.2);
+        border: none;
+        width: 44px;
+        height: 44px;
+        border-radius: 12px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 20px;
+        transition: all 0.3s;
+    }
+
+    .search-btn:hover {
+        background: rgba(255,255,255,0.3);
+        transform: translateY(-50%) scale(1.05);
+    }
+
+    .search-btn:active {
+        transform: translateY(-50%) scale(0.95);
+    }
+
+    .quick-actions {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+        margin: 30px 0;
+        animation: fadeInUp 0.6s ease-out 0.4s backwards;
+    }
+
+    .action-card {
+        background: rgba(255,255,255,0.15);
+        backdrop-filter: blur(10px);
+        border-radius: 16px;
+        padding: 20px;
+        border: 2px solid rgba(255,255,255,0.2);
+        cursor: pointer;
+        transition: all 0.3s;
+        text-align: center;
+    }
+
+    .action-card:hover {
+        background: rgba(255,255,255,0.25);
+        transform: translateY(-4px);
+        box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    }
+
+    .action-card:active {
+        transform: translateY(-2px);
+    }
+
+    .action-icon {
+        font-size: 32px;
+        margin-bottom: 8px;
+    }
+
+    .action-title {
+        font-size: 14px;
+        font-weight: 600;
+        margin-bottom: 4px;
+    }
+
+    .action-desc {
+        font-size: 12px;
+        opacity: 0.8;
+    }
+
+    .playlists {
+        margin-top: 30px;
+        animation: fadeInUp 0.6s ease-out 0.6s backwards;
+    }
+
+    .section-title {
+        font-size: 20px;
+        font-weight: 700;
+        margin-bottom: 16px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .playlist-list {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .playlist-card {
+        background: rgba(255,255,255,0.15);
+        backdrop-filter: blur(10px);
+        border-radius: 16px;
+        padding: 16px;
+        border: 2px solid rgba(255,255,255,0.2);
+        cursor: pointer;
+        transition: all 0.3s;
+        display: flex;
+        align-items: center;
+        gap: 16px;
+    }
+
+    .playlist-card:hover {
+        background: rgba(255,255,255,0.25);
+        transform: translateX(4px);
+    }
+
+    .playlist-icon {
+        font-size: 32px;
+        width: 50px;
+        height: 50px;
+        background: rgba(255,255,255,0.2);
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+    }
+
+    .playlist-info {
+        flex: 1;
+    }
+
+    .playlist-name {
+        font-size: 16px;
+        font-weight: 600;
+        margin-bottom: 4px;
+    }
+
+    .playlist-count {
+        font-size: 14px;
+        opacity: 0.8;
+    }
+
+    .recent-downloads {
+        margin-top: 30px;
+        animation: fadeInUp 0.6s ease-out 0.8s backwards;
+    }
+
+    .history-item {
+        background: rgba(255,255,255,0.1);
+        backdrop-filter: blur(10px);
+        border-radius: 12px;
+        padding: 12px 16px;
+        border: 1px solid rgba(255,255,255,0.2);
+        margin-bottom: 8px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        transition: all 0.3s;
+    }
+
+    .history-item:hover {
+        background: rgba(255,255,255,0.2);
+        transform: translateX(4px);
+    }
+
+    .history-icon {
+        font-size: 20px;
+    }
+
+    .history-text {
+        flex: 1;
+        font-size: 14px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 40px 20px;
+        opacity: 0.7;
+    }
+
+    .empty-icon {
+        font-size: 48px;
+        margin-bottom: 12px;
+    }
+
+    .loading {
+        text-align: center;
+        padding: 20px;
+    }
+
+    .spinner {
+        width: 40px;
+        height: 40px;
+        border: 4px solid rgba(255,255,255,0.3);
+        border-top-color: #fff;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+        margin: 0 auto;
+    }
+
+    .quality-selector {
+        display: flex;
+        gap: 8px;
+        justify-content: center;
+        margin: 20px 0;
+        animation: fadeInUp 0.6s ease-out 1s backwards;
+    }
+
+    .quality-btn {
+        background: rgba(255,255,255,0.15);
+        border: 2px solid rgba(255,255,255,0.2);
+        color: #fff;
+        padding: 8px 20px;
+        border-radius: 20px;
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s;
+    }
+
+    .quality-btn.active {
+        background: rgba(255,255,255,0.3);
+        border-color: rgba(255,255,255,0.5);
+        transform: scale(1.05);
+    }
+
+    .quality-btn:hover {
+        background: rgba(255,255,255,0.25);
+    }
+
+    @keyframes fadeInDown {
+        from {
+            opacity: 0;
+            transform: translateY(-20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @keyframes pulse {
+        0%, 100% {
+            transform: scale(1);
+        }
+        50% {
+            transform: scale(1.05);
+        }
+    }
+
+    @keyframes spin {
+        to {
+            transform: rotate(360deg);
+        }
+    }
+
+    .toast {
+        position: fixed;
+        bottom: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: rgba(0,0,0,0.9);
+        color: #fff;
+        padding: 12px 24px;
+        border-radius: 12px;
+        font-size: 14px;
+        z-index: 1000;
+        animation: slideUp 0.3s ease-out;
+    }
+
+    @keyframes slideUp {
+        from {
+            opacity: 0;
+            transform: translate(-50%, 20px);
+        }
+        to {
+            opacity: 1;
+            transform: translate(-50%, 0);
+        }
+    }
+</style>
+```
+
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="logo">🎧</div>
+            <h1>RyzenMusic</h1>
+            <p>Your Premium Music Downloader</p>
+        </div>
+
+```
+    <div class="search-box">
+        <div class="search-container">
+            <input 
+                type="text" 
+                class="search-input" 
+                id="searchInput"
+                placeholder="Search for songs, artists, or albums..."
+            >
+            <button class="search-btn" id="searchBtn">🔍</button>
+        </div>
+    </div>
+
+    <div class="quality-selector">
+        <button class="quality-btn" data-quality="128">128 kbps</button>
+        <button class="quality-btn active" data-quality="192">192 kbps</button>
+        <button class="quality-btn" data-quality="320">320 kbps</button>
+    </div>
+
+    <div class="quick-actions">
+        <div class="action-card" data-action="trending">
+            <div class="action-icon">🔥</div>
+            <div class="action-title">Trending</div>
+            <div class="action-desc">Popular tracks</div>
+        </div>
+        <div class="action-card" data-action="queue">
+            <div class="action-icon">📋</div>
+            <div class="action-title">Queue</div>
+            <div class="action-desc">View downloads</div>
+        </div>
+        <div class="action-card" data-action="create-playlist">
+            <div class="action-icon">➕</div>
+            <div class="action-title">New Playlist</div>
+            <div class="action-desc">Create collection</div>
+        </div>
+        <div class="action-card" data-action="settings">
+            <div class="action-icon">⚙️</div>
+            <div class="action-title">Settings</div>
+            <div class="action-desc">Preferences</div>
+        </div>
+    </div>
+
+    <div class="playlists">
+        <div class="section-title">
+            <span>🎶</span>
+            <span>Your Playlists</span>
+        </div>
+        <div class="playlist-list" id="playlistList">
+            <div class="loading">
+                <div class="spinner"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="recent-downloads">
+        <div class="section-title">
+            <span>📜</span>
+            <span>Recent Downloads</span>
+        </div>
+        <div id="historyList">
+            <div class="empty-state">
+                <div class="empty-icon">🎵</div>
+                <div>No recent downloads</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Initialize Telegram WebApp
+    const tg = window.Telegram.WebApp;
+    tg.expand();
+    tg.enableClosingConfirmation();
+
+    // Apply Telegram theme
+    document.body.style.background = tg.themeParams.bg_color || 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
+
+    // State
+    let currentQuality = '192';
+    let playlists = [];
+    let history = [];
+
+    // Quality selector
+    document.querySelectorAll('.quality-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            document.querySelectorAll('.quality-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            currentQuality = btn.dataset.quality;
+            showToast(`Quality set to ${currentQuality} kbps`);
+
+            // Send to bot
+            tg.sendData(JSON.stringify({
+                action: 'set_quality',
+                quality: currentQuality
+            }));
+        });
+    });
+
+    // Search functionality
+    const searchInput = document.getElementById('searchInput');
+    const searchBtn = document.getElementById('searchBtn');
+
+    function handleSearch() {
+        const query = searchInput.value.trim();
+        if (!query) {
+            showToast('Please enter a song name or URL');
+            return;
+        }
+
+        showToast('Sending to bot...');
+
+        // Send search query to bot
+        tg.sendData(JSON.stringify({
+            action: 'download',
+            query: query,
+            quality: currentQuality
+        }));
+
+        // Add to history
+        addToHistory(query);
+
+        searchInput.value = '';
+    }
+
+    searchBtn.addEventListener('click', handleSearch);
+    searchInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+            handleSearch();
+        }
+    });
+
+    // Quick actions
+    document.querySelectorAll('.action-card').forEach(card => {
+        card.addEventListener('click', () => {
+            const action = card.dataset.action;
+
+            switch(action) {
+                case 'trending':
+                    showToast('Opening trending songs...');
+                    tg.sendData(JSON.stringify({action: 'trending'}));
+                    break;
+                case 'queue':
+                    showToast('Opening download queue...');
+                    tg.sendData(JSON.stringify({action: 'queue'}));
+                    break;
+                case 'create-playlist':
+                    const name = prompt('Enter playlist name:');
+                    if (name) {
+                        createPlaylist(name);
+                    }
+                    break;
+                case 'settings':
+                    showToast('Opening settings...');
+                    tg.sendData(JSON.stringify({action: 'settings'}));
+                    break;
+            }
+        });
+    });
+
+    // Playlist management
+    function loadPlaylists() {
+        // Simulate loading playlists (in real app, fetch from bot)
+        setTimeout(() => {
+            playlists = [
+                { name: 'Favorites', count: 12, icon: '❤️' },
+                { name: 'Workout Mix', count: 8, icon: '💪' },
+                { name: 'Chill Vibes', count: 15, icon: '🌙' }
+            ];
+            renderPlaylists();
+        }, 1000);
+    }
+
+    function renderPlaylists() {
+        const listEl = document.getElementById('playlistList');
+
+        if (playlists.length === 0) {
+            listEl.innerHTML = `
+                <div class="empty-state">
+                    <div class="empty-icon">🎶</div>
+                    <div>No playlists yet</div>
+                </div>
+            `;
+            return;
+        }
+
+        listEl.innerHTML = playlists.map(playlist => `
+            <div class="playlist-card" data-playlist="${playlist.name}">
+                <div class="playlist-icon">${playlist.icon}</div>
+                <div class="playlist-info">
+                    <div class="playlist-name">${playlist.name}</div>
+                    <div class="playlist-count">${playlist.count} songs</div>
+                </div>
+            </div>
+        `).join('');
+
+        // Add click handlers
+        document.querySelectorAll('.playlist-card').forEach(card => {
+            card.addEventListener('click', () => {
+                const playlistName = card.dataset.playlist;
+                showToast(`Opening ${playlistName}...`);
+                tg.sendData(JSON.stringify({
+                    action: 'view_playlist',
+                    name: playlistName
+                }));
+            });
+        });
+    }
+
+    function createPlaylist(name) {
+        showToast(`Creating playlist: ${name}`);
+        tg.sendData(JSON.stringify({
+            action: 'create_playlist',
+            name: name
+        }));
+
+        playlists.push({ name, count: 0, icon: '🎵' });
+        renderPlaylists();
+    }
+
+    // History management
+    function addToHistory(query) {
+        history.unshift(query);
+        history = history.slice(0, 5);
+        renderHistory();
+    }
+
+    function renderHistory() {
+        const listEl = document.getElementById('historyList');
+
+        if (history.length === 0) {
+            listEl.innerHTML = `
+                <div class="empty-state">
+                    <div class="empty-icon">🎵</div>
+                    <div>No recent downloads</div>
+                </div>
+            `;
+            return;
+        }
+
+        listEl.innerHTML = history.map(item => `
+            <div class="history-item">
+                <div class="history-icon">🎵</div>
+                <div class="history-text">${item}</div>
+            </div>
+        `).join('');
+    }
+
+    // Toast notifications
+    function showToast(message) {
+        const toast = document.createElement('div');
+        toast.className = 'toast';
+        toast.textContent = message;
+        document.body.appendChild(toast);
+
+        setTimeout(() => {
+            toast.remove();
+        }, 3000);
+    }
+
+    // Haptic feedback
+    function haptic() {
+        if (tg.HapticFeedback) {
+            tg.HapticFeedback.impactOccurred('light');
+        }
+    }
+
+    // Add haptic to all interactive elements
+    document.querySelectorAll('button, .action-card, .playlist-card').forEach(el => {
+        el.addEventListener('click', haptic);
+    });
+
+    // Initialize
+    loadPlaylists();
+    renderHistory();
+
+    // Show ready status
+    tg.ready();
+    console.log('Mini App initialized!');
+</script>
+```
+
+</body>
+</html>
